@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.jbit.dao.GamesDao"><!--指定对应得dao层-->
+    <cache eviction="LRU" type="cn.jbit.cache.RedisCache"/>
+
+    <select id="findByParent" resultType="Games">
+        SELECT g.*,ga.tName AS 'tName' FROM games AS g,gamestype AS ga WHERE g.tId=ga.tId
+        <if test="tId>0">AND tId=#{tId}</if>
+    </select>
+</mapper>
