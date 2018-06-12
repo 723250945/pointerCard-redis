@@ -45,7 +45,7 @@ public class Interceptor extends HandlerInterceptorAdapter {
             request.getSession().setAttribute("e", "你没有权限访问该页面！请登录后再访问！");
             //在这之前进行一个判断，看用户是否要进买东西得操作byCard
             // 浏览某件具体商品tocardView再后台去处理
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/static/tologin");
         }
         return flg;
     }
