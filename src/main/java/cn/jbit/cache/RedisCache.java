@@ -2,7 +2,6 @@ package cn.jbit.cache;
 
 import cn.jbit.util.MD5;
 import org.apache.ibatis.cache.Cache;
-import org.apache.log4j.Logger;
 import org.springframework.data.redis.connection.jedis.JedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;

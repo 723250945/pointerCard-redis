@@ -160,5 +160,5 @@ ps：什么是对象间的循环嵌套？比如A有一个List<B>，B对象里又
     </mvc:interceptors>
 
     <!--扫描注解的bean-->
-    <context:component-scan base-package="cn.jbit.biz,cn.jbit.biz.bizImpl,cn.jbit.control,cn.jbit.redis" />
+    <context:component-scan base-package="cn.jbit.biz,cn.jbit.biz.bizImpl,cn.jbit.control,cn.jbit.cache" />
 </beans>

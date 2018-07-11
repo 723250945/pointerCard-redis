@@ -19,29 +19,40 @@
 	http://www.springframework.org/schema/tx/spring-tx-3.1.xsd"
         default-autowire="byName"   >
 
-  <!--数据源,阿里巴巴-->
-  <!--<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
-    <property name="url" value="jdbc:mysql://localhost:3306/onlineqa?useUnicode=true&amp;characterEncoding=utf-8" />
-    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-    <property name="username" value="root" />
-    <property name="password" value="111111" />
-    <property name="maxPoolPreparedStatementPerConnectionSize" value="100"/>
-    <property name="maxActive" value="50" />
-  </bean>-->
 
+  <!-- 自动扫描 -->
+  <context:component-scan base-package="cn.jbit" />
+  <!-- 引入配置文件 -->
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:db.properties</value>
+        <value>classpath:redis.properties</value>
+      </list>
+    </property>
+  </bean>
 
   <!--数据源,读取数据配置文件-->
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="location" value="classpath:db.properties"/>
   </bean>
   <!--数据源,C3p0-->
-  <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+ <!-- <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
     <property name="jdbcUrl" value="${DB_URL}"/>
     <property name="driverClass" value="${DB_DRIVER}"/>
     <property name="user" value="${DB_NAME}"/>
     <property name="password" value="${DB_PWD}"/>
     <property name="maxPoolSize" value="${DB_MAXConnectionSize}" />
     <property name="maxStatementsPerConnection" value="${DB_MAXActive}"/>
+  </bean>-->
+  <!--数据源,阿里巴巴-->
+  <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+    <property name="url" value="jdbc:mysql://localhost:3306/gameCard?useUnicode=true&amp;characterEncoding=utf-8" />
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="username" value="${DB_NAME}" />
+    <property name="password" value="${DB_PWD}" />
+    <property name="maxPoolPreparedStatementPerConnectionSize" value="100"/>
+    <property name="maxActive" value="50" />
   </bean>
   <!--会话工厂-->
   <bean name="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -50,11 +61,6 @@
   </bean>
 
 
-  <!--扫描dao接口-->
-  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-    <property name="basePackage" value="cn.jbit.dao"/>
-    <property name="sqlSessionFactoryBeanName" value="sessionFactory" />
-  </bean>
   <!--扫入日志类-->
   <bean id="log4j" class="cn.jbit.util.Log4j"></bean>
   <!--启用对@AspectJ注解的支持-->
@@ -83,4 +89,31 @@
     </aop:aspect>
   </aop:config>
 
+
+
+  <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <property name="basePackage" value="cn.jbit.dao" />
+    <property name="sqlSessionFactoryBeanName" value="sessionFactory"></property>
+  </bean>
+
+  <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+
+  <tx:annotation-driven transaction-manager="transactionManager" />
+  <!-- redis数据源 -->
+  <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+    <property name="maxIdle" value="${redis.maxIdle}" />
+    <property name="maxTotal" value="${redis.maxActive}" />
+    <property name="maxWaitMillis" value="${redis.maxWait}" />
+    <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+  </bean>
+  <!-- Spring-redis连接池管理工厂 -->
+  <bean id="jedisConnectionFactory"
+        class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+        p:host-name="${redis.host}" p:port="${redis.port}" p:password="${redis.password}"
+        p:pool-config-ref="poolConfig" />
+  <!-- 使用中间类解决RedisCache.jedisConnectionFactory的静态注入，从而使MyBatis实现第三方缓存 -->
+  <bean id="redisCacheTransfer" class="cn.jbit.cache.RedisCacheTransfer">
+    <property name="jedisConnectionFactory" ref="jedisConnectionFactory"/>
+  </bean>
 </beans>

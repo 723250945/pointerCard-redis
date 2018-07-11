@@ -7,7 +7,7 @@
   <!--如果applicationContext.xml文件不在web-inf目录下，就适用<context-param>-->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:spring-mybatis.xml</param-value><!--使用了redis的注解，applicationContext.xml被它替代-->
+    <param-value>classpath:applicationContext.xml</param-value><!--applicationContext-->
   </context-param>
   <!-- Spring监听器 -->
   <listener>
