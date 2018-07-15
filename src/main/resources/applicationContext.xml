@@ -51,8 +51,13 @@
     <property name="driverClassName" value="com.mysql.jdbc.Driver" />
     <property name="username" value="${DB_NAME}" />
     <property name="password" value="${DB_PWD}" />
-    <property name="maxPoolPreparedStatementPerConnectionSize" value="100"/>
-    <property name="maxActive" value="50" />
+    <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+    <property name="poolPreparedStatements" value="true" />
+    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+    <!-- 配置初始化大小、最小、最大 -->
+    <property name="initialSize" value="1" />
+    <property name="minIdle" value="1" />
+    <property name="maxActive" value="5" />
   </bean>
   <!--会话工厂-->
   <bean name="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
